@@ -5,20 +5,20 @@
 // $NoKeywords: $
 //===========================================================================//
 
-#include "CreateMultiplayerGameServerPage.h"
+#include "createmultiplayergameserverpage.h"
 
 using namespace vgui;
 
-#include <KeyValues.h>
+#include <keyvalues.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/RadioButton.h>
 #include <vgui_controls/CheckButton.h>
-#include "FileSystem.h"
+#include "filesystem.h"
 #include "tier1/convar.h"
-#include "EngineInterface.h"
-#include "CvarToggleCheckButton.h"
+#include "engineinterface.h"
+#include "cvartogglecheckbutton.h"
 
-#include "ModInfo.h"
+#include "modinfo.h"
 
 // for SRC
 #include <vstdlib/random.h>
@@ -154,19 +154,21 @@ void CCreateMultiplayerGameServerPage::LoadMaps( const char *pszPathID )
 
 		// remove the text 'maps/' and '.bsp' from the file name to get the map name
 		
-		const char *str = Q_strstr( pszFilename, "maps" );
-		if ( str )
-		{
-			Q_strncpy( mapname, str + 5, sizeof(mapname) - 1 );	// maps + \\ = 5
-		}
-		else
-		{
-			Q_strncpy( mapname, pszFilename, sizeof(mapname) - 1 );
-		}
-		char *ext = Q_strstr( mapname, ".bsp" );
-		if ( ext )
-		{
-			*ext = 0;
+		{ 
+			const char *str = Q_strstr( pszFilename, "maps" );
+			if ( str )
+			{
+				Q_strncpy( mapname, str + 5, sizeof(mapname) - 1 );	// maps + \\ = 5
+			}
+			else
+			{
+				Q_strncpy( mapname, pszFilename, sizeof(mapname) - 1 );
+			}
+			char *ext = Q_strstr( mapname, ".bsp" );
+			if ( ext )
+			{
+				*ext = 0;
+			}
 		}
 
 		//!! hack: strip out single player HL maps

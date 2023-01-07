@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright  1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -7,17 +7,24 @@
 
 #undef fopen
 
-#if !defined( _X360 )
+#if !defined( _GAMECONSOLE ) && !defined( _OSX ) && !defined (LINUX)
 #include <windows.h> // SRC only!!
 #endif
 
-#include "OptionsSubMultiplayer.h"
-#include "MultiplayerAdvancedDialog.h"
+#if defined( POSIX ) && !defined( _PS3 )
+#ifdef OSX
+#include <copyfile.h>
+#endif
+#define DeleteFile unlink
+#endif
+
+#include "optionssubmultiplayer.h"
+#include "multiplayeradvanceddialog.h"
 #include <stdio.h>
 
 #include <vgui_controls/Button.h>
 #include <vgui_controls/CheckButton.h>
-#include "tier1/KeyValues.h"
+#include "tier1/keyvalues.h"
 #include <vgui_controls/Label.h>
 #include <vgui/ISystem.h>
 #include <vgui/ISurface.h>
@@ -27,25 +34,25 @@
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/FileOpenDialog.h>
 #include <vgui_controls/MessageBox.h>
-#include <vgui/IVgui.h>
+#include <vgui/IVGui.h>
 #include <vgui/ILocalize.h>
 #include <vgui/IPanel.h>
 #include <vgui_controls/MessageBox.h>
 
-#include "CvarTextEntry.h"
-#include "CvarToggleCheckButton.h"
-#include "CvarSlider.h"
-#include "LabeledCommandComboBox.h"
-#include "FileSystem.h"
-#include "EngineInterface.h"
-#include "BitmapImagePanel.h"
-#include "UtlBuffer.h"
-#include "ModInfo.h"
+#include "cvartextentry.h"
+#include "cvartogglecheckbutton.h"
+#include "cvarslider.h"
+#include "labeledcommandcombobox.h"
+#include "filesystem.h"
+#include "engineinterface.h"
+#include "bitmapimagepanel.h"
+#include "utlbuffer.h"
+#include "modinfo.h"
 #include "tier1/convar.h"
 
 
-#include "materialsystem/IMaterial.h"
-#include "materialsystem/IMesh.h"
+#include "materialsystem/imaterial.h"
+#include "materialsystem/imesh.h"
 #include "materialsystem/imaterialvar.h"
 
 // use the JPEGLIB_USE_STDIO define so that we can read in jpeg's from outside the game directory tree.  For Spray Import.
@@ -57,8 +64,17 @@
 
 #include "bitmap/tgawriter.h"
 #include "ivtex.h"
+// dgoodenough - io.h doesn't exist on the PS3
+// PS3_BUILDFIX
+#if !defined( _PS3 ) && !defined( _OSX ) && !defined (LINUX)
 #include <io.h>
+#endif
 
+// dgoodenough - select the correct stubs header based on current console
+// PS3_BUILDFIX
+#if defined( _PS3 )
+#include "ps3/ps3_win32stubs.h"
+#endif
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
 #endif
@@ -568,13 +584,11 @@ void COptionsSubMultiplayer::OnCommand( const char *command )
 {
 	if ( !stricmp( command, "Advanced" ) )
 	{
-#ifndef _XBOX
 		if (!m_hMultiplayerAdvancedDialog.Get())
 		{
 			m_hMultiplayerAdvancedDialog = new CMultiplayerAdvancedDialog( this );
 		}
 		m_hMultiplayerAdvancedDialog->Activate();
-#endif
 	}
 	else if (!stricmp( command, "ImportSprayImage" ) )
 	{
@@ -598,7 +612,6 @@ void COptionsSubMultiplayer::OnCommand( const char *command )
 // file selected.  This can only happen when someone selects an image to be imported as a spray logo.
 void COptionsSubMultiplayer::OnFileSelected(const char *fullpath)
 {
-#ifndef _XBOX
 	if ((fullpath == NULL) || (fullpath[0] == 0))
 	{
 		return;
@@ -642,10 +655,15 @@ void COptionsSubMultiplayer::OnFileSelected(const char *fullpath)
 		Q_strncpy(origpath, tgaPath, sizeof(origpath));
 
 		int index = 0;
+		// dgoodenough - remove this section on PS3 since we don't have a filesystem _access(...) function yet
+		// PS3_BUILDFIX
+		// FIXME FIXME FIXME
+#if !defined( _PS3 )
 		do {
 			Q_snprintf(tgaPath, sizeof(tgaPath), "%stemp%d.tga", origpath, index);
 			++index;
 		} while (_access(tgaPath, 0) != -1);
+#endif
 
 		if (!stricmp(extension, "jpg") || !stricmp(extension, "jpeg"))
 		{
@@ -872,7 +890,13 @@ void COptionsSubMultiplayer::OnFileSelected(const char *fullpath)
 		if (!failed)
 		{
 			// copy vtf file to the final location.
+#ifdef WIN32
 			CopyFile(vtfPath, finalPath, true);
+#elif defined( OSX )
+			copyfile( vtfPath, finalPath, 0, 0 );
+#elif !defined( _PS3 )
+			engine->CopyLocalFile( vtfPath, finalPath );
+#endif
 
 			// refresh the logo list so the new spray shows up.
 			InitLogoList(m_pLogoList);
@@ -891,8 +915,12 @@ void COptionsSubMultiplayer::OnFileSelected(const char *fullpath)
 	// delete the intermediate VTF file if one was made.
 	if (deleteIntermediateVTF)
 	{
+// dgoodenough - DeleteFile is Win32 specific, remove it for PS3 build
+// PS3_BUILDFIX
+// FIXME - How will this be handled on PS3?
+#if !defined( _PS3 )
 		DeleteFile(vtfPath);
-
+#endif
 		// the TGA->VTF conversion process generates a .txt file if one wasn't already there.
 		// in this case, delete the .txt file.
 		c = vtfPath + strlen(vtfPath);
@@ -901,18 +929,27 @@ void COptionsSubMultiplayer::OnFileSelected(const char *fullpath)
 			--c;
 		}
 		Q_strncpy(c, "txt", sizeof(vtfPath)-(c-vtfPath));
+// dgoodenough - DeleteFile is Win32 specific, remove it for PS3 build
+// PS3_BUILDFIX
+// FIXME - How will this be handled on PS3?
+#if !defined( _PS3 )
 		DeleteFile(vtfPath);
+#endif
 	}
 
 	// delete the intermediate TGA file if one was made.
 	if (deleteIntermediateTGA)
 	{
+// dgoodenough - DeleteFile is Win32 specific, remove it for PS3 build
+// PS3_BUILDFIX
+// FIXME - How will this be handled on PS3?
+#if !defined( _PS3 )
 		DeleteFile(tgaPath);
+#endif
 	}
 
 	// change the cursor back to normal
 	surface()->SetCursor(dc_user);
-#endif
 }
 
 struct ValveJpegErrorHandler_t 
@@ -944,7 +981,7 @@ static void ValveJpegErrorHandler( j_common_ptr cinfo )
 // convert the JPEG file given to a TGA file at the given output path.
 ConversionErrorType COptionsSubMultiplayer::ConvertJPEGToTGA(const char *jpegpath, const char *tgaPath)
 {
-#if !defined( _X360 )
+#if !defined( _GAMECONSOLE )
 	struct jpeg_decompress_struct jpegInfo;
 	struct ValveJpegErrorHandler_t jerr;
 	JSAMPROW row_pointer[1];
@@ -1070,6 +1107,10 @@ ConversionErrorType COptionsSubMultiplayer::ConvertBMPToTGA(const char *bmpPath,
 	if ( !IsPC() )
 		return CE_SOURCE_FILE_FORMAT_NOT_SUPPORTED;
 
+// @wge TODO FIXME - fix OSX build
+#if defined( _OSX ) || defined (LINUX)
+	return CE_SOURCE_FILE_FORMAT_NOT_SUPPORTED;
+#else
 	HBITMAP hBitmap = (HBITMAP)LoadImage(NULL, bmpPath, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE | LR_DEFAULTSIZE);
 	BITMAP bitmap;
 
@@ -1287,6 +1328,7 @@ ConversionErrorType COptionsSubMultiplayer::ConvertBMPToTGA(const char *bmpPath,
 	}
 	DeleteObject(hBitmap);
 	return retval ? CE_SUCCESS : CE_ERROR_WRITING_OUTPUT_FILE;
+#endif // !_OSX
 }
 
 // read a TGA header from the current point in the file stream.
@@ -1650,10 +1692,10 @@ ConversionErrorType COptionsSubMultiplayer::StretchRGBAImage(const unsigned char
 			}
 
 			// assign the computed color to the destination pixel, round to the nearest value.  Make sure the value doesn't exceed 255.
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4)] = min((int)(destRed + 0.5f), 255);
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 1] = min((int)(destGreen + 0.5f), 255);
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 2] = min((int)(destBlue + 0.5f), 255);
-			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 3] = min((int)(destAlpha + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4)] = MIN((int)(destRed + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 1] = MIN((int)(destGreen + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 2] = MIN((int)(destBlue + 0.5f), 255);
+			destBuf[(destRow * destWidth * 4) + (destColumn * 4) + 3] = MIN((int)(destAlpha + 0.5f), 255);
 		} // column loop
 	} // row loop
 
@@ -1837,6 +1879,7 @@ void COptionsSubMultiplayer::InitLogoList( CLabeledCommandComboBox *cb )
 	FileFindHandle_t fh;
 	char directory[ 512 ];
 
+	// NOTE: <<vitaliy>> this feature is obsolete in CS:GO
 	ConVarRef cl_logofile( "cl_logofile" );
 	if ( !cl_logofile.IsValid() )
 		return;
@@ -2339,6 +2382,16 @@ void COptionsSubMultiplayer::OnApplyButtonEnable()
 #define PLATE_HUE_START 160
 #define PLATE_HUE_END 191
 
+// @wge this struct definition is from Portal 2 source, but didn't want to conflict with other platforms so made it OSX only.
+#if defined( _OSX ) || defined (LINUX)
+typedef struct tagRGBQUAD { 
+	uint8 rgbBlue;
+	uint8 rgbGreen;
+	uint8 rgbRed;
+	uint8 rgbReserved;
+} RGBQUAD;
+#endif // _OSX
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -2357,8 +2410,8 @@ static void PaletteHueReplace( RGBQUAD *palSrc, int newHue, int Start, int end )
 		g = palSrc[ i ].rgbGreen;
 		r = palSrc[ i ].rgbRed;
 		
-		maxcol = max( max( r, g ), b ) / 255.0f;
-		mincol = min( min( r, g ), b ) / 255.0f;
+		maxcol = MAX( MAX( r, g ), b ) / 255.0f;
+		mincol = MIN( MIN( r, g ), b ) / 255.0f;
 		
 		val = maxcol;
 		sat = (maxcol - mincol) / maxcol;
@@ -2419,6 +2472,7 @@ static void PaletteHueReplace( RGBQUAD *palSrc, int newHue, int Start, int end )
 //-----------------------------------------------------------------------------
 void COptionsSubMultiplayer::RemapPalette( char *filename, int topcolor, int bottomcolor )
 {
+#if !defined( _OSX ) && !defined( _PS3 ) && !defined (LINUX)
 	char infile[ 256 ];
 	char outfile[ 256 ];
 
@@ -2476,6 +2530,7 @@ void COptionsSubMultiplayer::RemapPalette( char *filename, int topcolor, int bot
 		g_pFullFileSystem->Write( outbuffer.Base(), outbuffer.TellPut(), file );
 		g_pFullFileSystem->Close( file );
 	}
+#endif // !_OSX && !_PS3
 }
 
 //-----------------------------------------------------------------------------
@@ -2489,7 +2544,7 @@ void COptionsSubMultiplayer::ColorForName( char const *pszColorName, int&r, int&
 
 	for ( int i = 0; i < count; i++ )
 	{
-		if (!Q_strnicmp(pszColorName, itemlist[ i ].name, strlen(itemlist[ i ].name)))
+		if ( StringHasPrefix( pszColorName, itemlist[ i ].name ) )
 		{
 			r = itemlist[ i ].r;
 			g = itemlist[ i ].g;
@@ -2577,6 +2632,7 @@ void COptionsSubMultiplayer::OnApplyChanges()
 		engine->ClientCmd_Unrestricted(cmd);
 	}
 
+	// NOTE: <<vitaliy>> this feature is obsolete in CS:GO
 	// save the logo name
 	char cmd[512];
 	if ( m_LogoName[ 0 ] )

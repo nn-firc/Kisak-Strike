@@ -12,7 +12,7 @@
 #endif
 
 #include <vgui_controls/Frame.h>
-#include "ScriptObject.h"
+#include "scriptobject.h"
 #include <vgui/KeyCode.h>
 
 //-----------------------------------------------------------------------------
@@ -23,7 +23,7 @@ class CMultiplayerAdvancedDialog : public vgui::Frame
 	DECLARE_CLASS_SIMPLE( CMultiplayerAdvancedDialog, vgui::Frame ); 
 
 public:
-	CMultiplayerAdvancedDialog(vgui::Panel *parent);
+	explicit CMultiplayerAdvancedDialog(vgui::Panel *parent);
 	~CMultiplayerAdvancedDialog();
 
 	virtual void Activate();

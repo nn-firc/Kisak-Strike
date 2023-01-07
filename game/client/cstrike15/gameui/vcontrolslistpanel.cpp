@@ -6,15 +6,15 @@
 //=============================================================================//
 
 #include "vcontrolslistpanel.h"
-#include "GameUI_Interface.h"
-#include "EngineInterface.h"
+#include "gameui_interface.h"
+#include "engineinterface.h"
 
 #include <vgui/IInput.h>
 #include <vgui/IScheme.h>
 #include <vgui/ISurface.h>
 #include <vgui/IVGui.h>
 #include <vgui/Cursor.h>
-#include <KeyValues.h>
+#include <keyvalues.h>
 
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -38,7 +38,7 @@ public:
 		GetSize(wide, tall);
 
 		// Draw a white rectangle around that cell
-		vgui::surface()->DrawSetColor( 0, 165, 255, 255 );
+		vgui::surface()->DrawSetColor( 255, 165, 0, 255 );
 		vgui::surface()->DrawFilledRect( x, y, x + wide, y + tall );
 	}
 

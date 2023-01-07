@@ -25,7 +25,7 @@ class CCreateMultiplayerGameDialog : public vgui::PropertyDialog
 	DECLARE_CLASS_SIMPLE( CCreateMultiplayerGameDialog,  vgui::PropertyDialog );
 
 public:
-	CCreateMultiplayerGameDialog(vgui::Panel *parent);
+	explicit CCreateMultiplayerGameDialog(vgui::Panel *parent);
 	~CCreateMultiplayerGameDialog();
 
 protected:

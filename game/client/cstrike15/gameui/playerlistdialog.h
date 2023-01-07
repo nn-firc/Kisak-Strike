@@ -21,7 +21,7 @@ class CPlayerListDialog : public vgui::Frame
 	DECLARE_CLASS_SIMPLE( CPlayerListDialog, vgui::Frame ); 
 
 public:
-	CPlayerListDialog(vgui::Panel *parent);
+	explicit CPlayerListDialog(vgui::Panel *parent);
 	~CPlayerListDialog();
 
 	virtual void Activate();

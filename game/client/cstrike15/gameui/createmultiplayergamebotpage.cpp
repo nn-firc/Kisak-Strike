@@ -6,22 +6,22 @@
 //
 //=============================================================================//
 
-#include "CreateMultiplayerGameBotPage.h"
+#include "createmultiplayergamebotpage.h"
 
 using namespace vgui;
 
-#include <KeyValues.h>
+#include <keyvalues.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/CheckButton.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/TextEntry.h>
 
-#include "FileSystem.h"
-#include "PanelListPanel.h"
-#include "ScriptObject.h"
+#include "filesystem.h"
+#include "panellistpanel.h"
+#include "scriptobject.h"
 #include "tier1/convar.h"
-#include "EngineInterface.h"
-#include "CvarToggleCheckButton.h"
+#include "engineinterface.h"
+#include "cvartogglecheckbutton.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
@@ -111,7 +111,7 @@ CCreateMultiplayerGameBotPage::CCreateMultiplayerGameBotPage( vgui::Panel *paren
 
 	m_joinAfterPlayer = new CCvarToggleCheckButton( this, "BotJoinAfterPlayerCheck", "", "bot_join_after_player" );
 
-	m_deferToHuman = new CCvarToggleCheckButton( this, "BotDeferToHumanCheck", "", "bot_defer_to_human" );
+	m_deferToHuman = new CCvarToggleCheckButton( this, "BotDeferToHumanCheck", "", "bot_defer_to_human_goals" );
 
 	// set up team join combo box
 	// NOTE: If order of AddItem is changed, update the associated enum
@@ -147,7 +147,7 @@ CCreateMultiplayerGameBotPage::CCreateMultiplayerGameBotPage( vgui::Panel *paren
 #ifdef CS_SHIELD_ENABLED
 	m_allowShields->SetSelected( botKeys->GetBool( "bot_allow_shield", true ) );
 #endif // CS_SHIELD_ENABLED
-	m_deferToHuman->SetSelected( botKeys->GetBool( "bot_defer_to_human", true ) );
+	m_deferToHuman->SetSelected( botKeys->GetBool( "bot_defer_to_human_goals", true ) );
 
 	SetJoinTeamCombo( botKeys->GetString( "bot_join_team", "any" ) );
 	SetChatterCombo( botKeys->GetString( "bot_chatter", "normal" ) );
@@ -210,7 +210,7 @@ void CCreateMultiplayerGameBotPage::OnApplyChanges()
 #ifdef CS_SHIELD_ENABLED
 	UpdateValue( m_pSavedData, "bot_allow_shield", m_allowShields->IsSelected() );
 #endif // CS_SHIELD_ENABLED
-	UpdateValue( m_pSavedData, "bot_defer_to_human", m_deferToHuman->IsSelected() );
+	UpdateValue( m_pSavedData, "bot_defer_to_human_goals", m_deferToHuman->IsSelected() );
 
 	// set bot_join_team
 	UpdateValue( m_pSavedData, "bot_join_team", joinTeamArg[ m_joinTeamCombo->GetActiveItem() ] );

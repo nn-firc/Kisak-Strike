@@ -12,11 +12,11 @@
 #pragma once
 #endif
 
-#include <vgui/VGUI.h>
+#include <vgui/vgui.h>
 #include <vgui/Dar.h>
-#include <Color.h>
+#include <color.h>
 #include <vgui_controls/Label.h>
-#include "vgui/mousecode.h"
+#include "vgui/MouseCode.h"
 
 namespace vgui
 {

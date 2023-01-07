@@ -14,10 +14,10 @@
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/PropertyPage.h>
-#include "EngineInterface.h"
-#include "igameuifuncs.h"
-#include "URLButton.h"
-#include "vgui_controls/frame.h"
+#include "engineinterface.h"
+#include "IGameUIFuncs.h"
+#include "urlbutton.h"
+#include "vgui_controls/Frame.h"
 
 
 class CCvarSlider;
@@ -30,7 +30,7 @@ class COptionsSubVideo : public vgui::PropertyPage
 	DECLARE_CLASS_SIMPLE( COptionsSubVideo, vgui::PropertyPage );
 
 public:
-	COptionsSubVideo(vgui::Panel *parent);
+	explicit COptionsSubVideo(vgui::Panel *parent);
 	~COptionsSubVideo();
 
 	virtual void OnResetData();
@@ -73,7 +73,7 @@ class COptionsSubVideoThirdPartyCreditsDlg : public vgui::Frame
 {
 	DECLARE_CLASS_SIMPLE( COptionsSubVideoThirdPartyCreditsDlg, vgui::Frame );
 public:
-	COptionsSubVideoThirdPartyCreditsDlg( vgui::VPANEL hParent );
+	explicit COptionsSubVideoThirdPartyCreditsDlg( vgui::VPANEL hParent );
 
 	virtual void Activate();
 	void OnKeyCodeTyped(vgui::KeyCode code);

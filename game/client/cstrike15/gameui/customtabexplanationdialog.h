@@ -11,7 +11,7 @@
 #endif
 
 #include "vgui_controls/Frame.h"
-#include "UtlVector.h"
+#include "utlvector.h"
 #include <vgui/KeyCode.h>
 #include "vgui_controls/URLLabel.h"
 
@@ -23,7 +23,7 @@ class CCustomTabExplanationDialog : public vgui::Frame
 	DECLARE_CLASS_SIMPLE( CCustomTabExplanationDialog, vgui::Frame );
 
 public:
-	CCustomTabExplanationDialog(vgui::Panel *parent);
+	explicit CCustomTabExplanationDialog(vgui::Panel *parent);
 	~CCustomTabExplanationDialog();
 
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );

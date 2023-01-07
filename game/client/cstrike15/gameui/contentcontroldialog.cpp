@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright  1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -7,19 +7,23 @@
 
 
 #include <stdio.h>
+// dgoodenough - memory.h doesn't exist on PS3
+// PS3_BUILDFIX
+#if !defined( _PS3 )
 #include <memory.h>
-#if !defined( _X360 )
+#endif
+#if !defined( _GAMECONSOLE ) && !defined( _OSX ) && !defined (LINUX)
 #include <windows.h>
 #endif
 
-#include "ContentControlDialog.h"
+#include "contentcontroldialog.h"
 #include "checksum_md5.h"
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include <vgui/IInput.h>
 #include <vgui/ISystem.h>
 #include <vgui/ISurface.h>
-#include "tier1/KeyValues.h"
+#include "tier1/keyvalues.h"
 #include "tier1/convar.h"
 
 #include <vgui_controls/Button.h>
@@ -28,6 +32,11 @@
 #include <vgui_controls/RadioButton.h>
 #include <vgui_controls/TextEntry.h>
 
+// dgoodenough - select correct stub header based on console
+// PS3_BUILDFIX
+#if defined( _PS3 )
+#include "ps3/ps3_win32stubs.h"
+#endif
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
 #endif
@@ -97,8 +106,8 @@ void CContentControlDialog::Activate()
 //-----------------------------------------------------------------------------
 void CContentControlDialog::ResetPassword()
 {
+#if !defined( _OSX ) && !defined (LINUX)
 	// Set initial value
-#ifndef _XBOX
 	HKEY key;
 	if ( ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Valve\\Half-Life\\Settings", 0, KEY_READ, &key))
 	{
@@ -109,10 +118,10 @@ void CContentControlDialog::ResetPassword()
 		RegCloseKey( key );
 	}
     else
-#endif
     {
         m_szGorePW[ 0 ] = 0;
     }
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -126,7 +135,7 @@ void CContentControlDialog::ApplyPassword()
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
-void CContentControlDialog::Explain( char const *fmt, ... )
+void CContentControlDialog::Explain( PRINTF_FORMAT_STRING char const *fmt, ... )
 {
 	if ( !m_pExplain )
 		return;
@@ -206,8 +215,8 @@ void CContentControlDialog::OnClose()
 //-----------------------------------------------------------------------------
 void CContentControlDialog::WriteToken( const char *str )
 {
+#if !defined( _OSX ) && !defined (LINUX)
 	// Set initial value
-#ifndef _XBOX
 	HKEY key;
 	if ( ERROR_SUCCESS == RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\Valve\\Half-Life\\Settings", 0, KEY_WRITE, &key))
 	{
@@ -218,10 +227,11 @@ void CContentControlDialog::WriteToken( const char *str )
 
 		RegCloseKey( key );
 	}
-#endif
+
 	Q_strncpy( m_szGorePW, str, sizeof( m_szGorePW ) );
 
 	UpdateContentControlStatus();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -234,7 +244,7 @@ void CContentControlDialog::HashPassword(const char *newPW, char *hashBuffer, in
 	MD5Context_t ctx;
 
 	MD5Init( &ctx );
-	MD5Update( &ctx, (unsigned char const *)(LPCSTR)newPW, strlen( newPW ) );
+	MD5Update( &ctx, (unsigned char const *)newPW, strlen( newPW ) );
 	MD5Final( md5_hash, &ctx );
 
 	char hex[ 128 ];

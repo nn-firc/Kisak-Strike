@@ -5,9 +5,9 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "LabeledCommandComboBox.h"
-#include "EngineInterface.h"
-#include <KeyValues.h>
+#include "labeledcommandcombobox.h"
+#include "engineinterface.h"
+#include <keyvalues.h>
 #include <vgui/ILocalize.h>
 
 // memdbgon must be the last include file in a .cpp file!!!

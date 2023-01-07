@@ -5,11 +5,11 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "CvarTextEntry.h"
-#include "EngineInterface.h"
+#include "cvartextentry.h"
+#include "engineinterface.h"
 #include <vgui/IVGui.h>
 #include "IGameUIFuncs.h"
-#include "tier1/KeyValues.h"
+#include "tier1/keyvalues.h"
 #include "tier1/convar.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -70,7 +70,7 @@ void CCvarTextEntry::ApplyChanges( bool immediate )
 	else
 	{
 		char szCommand[ 256 ];
-		sprintf( szCommand, "%s \"%s\"\n", m_pszCvarName, szText );
+		Q_snprintf( szCommand, 256, "%s \"%s\"\n", m_pszCvarName, szText );
 		engine->ClientCmd_Unrestricted( szCommand );
 	}
 

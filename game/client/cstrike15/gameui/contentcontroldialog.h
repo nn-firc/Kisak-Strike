@@ -21,7 +21,7 @@ class CContentControlDialog : public vgui::Frame
 	DECLARE_CLASS_SIMPLE( CContentControlDialog, vgui::Frame );
 
 public:
-	CContentControlDialog(vgui::Panel *parent);
+	explicit CContentControlDialog(vgui::Panel *parent);
 	~CContentControlDialog();
 
 	virtual void OnCommand( const char *command );
@@ -38,7 +38,7 @@ protected:
 	bool			CheckPassword( char const *oldPW, char const *newPW, bool enableContentControl );
 	void			UpdateContentControlStatus( void );
 
-	void			Explain( char const *fmt, ... );
+	void			Explain( PRINTF_FORMAT_STRING char const *fmt, ... );
 
     void            HashPassword(const char *newPW, char *hashBuffer, int maxlen );
     bool            EnablePassword(const char *newPW);

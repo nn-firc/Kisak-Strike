@@ -5,8 +5,8 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "CommandCheckButton.h"
-#include "EngineInterface.h"
+#include "commandcheckbutton.h"
+#include "engineinterface.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
@@ -37,11 +37,9 @@ void CCommandCheckButton::SetSelected( bool state )
 	if ( IsSelected() && m_pszDown )
 	{
 		engine->ClientCmd_Unrestricted( m_pszDown );
-		engine->ClientCmd_Unrestricted( "\n" );
 	}
 	else if ( !IsSelected() && m_pszUp )
 	{
 		engine->ClientCmd_Unrestricted( m_pszUp );
-		engine->ClientCmd_Unrestricted( "\n" );
 	}
 }

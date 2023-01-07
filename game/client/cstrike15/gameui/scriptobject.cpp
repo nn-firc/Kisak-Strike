@@ -7,16 +7,23 @@
 //===========================================================================//
 // CScriptObject and CDescription class definitions
 // 
-#include "ScriptObject.h"
+#include "scriptobject.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "EngineInterface.h"
+#include "engineinterface.h"
 #include <vgui_controls/Label.h>
-#include "FileSystem.h"
+#include "filesystem.h"
 #include "tier1/convar.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+
+// dgoodenough - select correct stub header based on console
+// PS3_BUILDFIX
+// FIXME - this is part of a bigger __min / __max problem.  How do we want to handle these?
+#if defined( _PS3 )
+#include "ps3/ps3_win32stubs.h"
+#endif
 
 using namespace vgui;
 static char token[ 1024 ];
@@ -326,9 +333,9 @@ void CScriptObject::WriteToFile( FileHandle_t fp )
 	case O_NUMBER:
 		fVal = fcurValue;
 		if ( fMin != -1.0 )
-			fVal = __max( fVal, fMin );
+			fVal = MAX( fVal, fMin );
 		if ( fMax != -1.0 )
-			fVal = __min( fVal, fMax );
+			fVal = MIN( fVal, fMax );
 		g_pFullFileSystem->FPrintf( fp, "\"%f\"\r\n", fVal );
 		break;
 	case O_STRING:
@@ -380,9 +387,9 @@ void CScriptObject::WriteToConfig( void )
 	case O_NUMBER:
 		fVal = fcurValue;
 		if ( fMin != -1.0 )
-			fVal = __max( fVal, fMin );
+			fVal = MAX( fVal, fMin );
 		if ( fMax != -1.0 )
-			fVal = __min( fVal, fMax );
+			fVal = MIN( fVal, fMax );
 		Q_snprintf( szValue, sizeof( szValue ), "%f", fVal );
 		break;
 	case O_STRING:

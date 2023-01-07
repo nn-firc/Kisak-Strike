@@ -30,7 +30,7 @@ class COptionsSubPortal : public vgui::PropertyPage
 	DECLARE_CLASS_SIMPLE( COptionsSubPortal, vgui::PropertyPage );
 
 public:
-	COptionsSubPortal(vgui::Panel *parent);
+	explicit COptionsSubPortal(vgui::Panel *parent);
 	~COptionsSubPortal();
 
 	virtual void OnResetData();

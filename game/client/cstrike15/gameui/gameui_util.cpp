@@ -9,7 +9,7 @@
 #include <stdarg.h>
 #include "gameui_util.h"
 #include "strtools.h"
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -85,6 +85,14 @@ void GameUI_MakeSafeName( const char *oldName, char *newName, int newNameBufSize
 	}
 	newName[newpos] = 0;
 }
+
+//-----------------------------------------------------------------------------
+// Purpose: Performs a var args printf into a static return buffer
+// Input  : *format - 
+//			... - 
+// Output : char
+//-----------------------------------------------------------------------------
+// Unused :: char *VarArgs( PRINTF_FORMAT_STRING const char *format, ... );
 
 //-----------------------------------------------------------------------------
 // This version is simply used to make reading convars simpler.

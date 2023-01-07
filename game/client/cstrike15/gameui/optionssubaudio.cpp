@@ -4,14 +4,14 @@
 //
 //=============================================================================//
 
-#include "OptionsSubAudio.h"
+#include "optionssubaudio.h"
 
-#include "CvarSlider.h"
-#include "EngineInterface.h"
-#include "ModInfo.h"
+#include "cvarslider.h"
+#include "engineinterface.h"
+#include "modinfo.h"
 #include "vgui_controls/ComboBox.h"
 #include "vgui_controls/QueryBox.h"
-#include "tier1/KeyValues.h"
+#include "tier1/keyvalues.h"
 #include "tier1/convar.h"
 #include "vgui/IInput.h"
 #include "steam/steam_api.h"
@@ -258,7 +258,11 @@ void COptionsSubAudio::OnApplyChanges()
 	CGameUIConVarRef dsp_enhance_stereo( "dsp_enhance_stereo" );
 	if (speakers == 0 && quality == SOUNDQUALITY_HIGH)
 	{
+#ifdef CSTRIKE15
+		dsp_enhance_stereo.SetValue( 0 );
+#else
 		dsp_enhance_stereo.SetValue( 1 );
+#endif
 	}
 	else
 	{
@@ -371,7 +375,7 @@ COptionsSubAudioThirdPartyCreditsDlg::COptionsSubAudioThirdPartyCreditsDlg( vgui
 
 #ifdef SWARM_DLL
 	// parent is ignored, since we want look like we're steal focus from the parent (we'll become modal below)
-	SetScheme( "SwarmFrameScheme" );
+	SetScheme( "SwarmScheme" );
 #endif
 
 	SetTitle( "#GameUI_ThirdPartyAudio_Title", true );

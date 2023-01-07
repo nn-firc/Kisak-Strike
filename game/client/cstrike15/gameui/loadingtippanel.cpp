@@ -7,8 +7,8 @@
 #include "loadingtippanel.h"
 #include "filesystem.h"
 #include "keyvalues.h"
-#include "vgui/isurface.h"
-#include "EngineInterface.h"
+#include "vgui/ISurface.h"
+#include "engineinterface.h"
 #include "vstdlib/random.h"
 #include "fmtstr.h"
 
