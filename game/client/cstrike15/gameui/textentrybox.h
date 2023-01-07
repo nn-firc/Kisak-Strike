@@ -13,15 +13,12 @@
 #pragma once
 #endif
 
-#include "keyvalues.h"
+#include "KeyValues.h"
 #include <vgui_controls/QueryBox.h>
 
-namespace vgui
-{
-	class Frame;
-	class TextEntry;
-	class Panel;
-}
+class vgui::Frame;
+class vgui::TextEntry;
+class vgui::Panel;
 class CCvarTextEntry;
 
 //--------------------------------------------------------------------------------------------------------------

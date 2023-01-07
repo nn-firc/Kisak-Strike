@@ -7,22 +7,22 @@
 
 #include <time.h>
 
-#include "multiplayeradvanceddialog.h"
+#include "MultiplayerAdvancedDialog.h"
 
 #include <vgui/ILocalize.h>
 #include <vgui/ISurface.h>
 #include <vgui_controls/ListPanel.h>
-#include <keyvalues.h>
+#include <KeyValues.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/Button.h>
 #include <vgui_controls/MessageBox.h>
 #include <vgui_controls/CheckButton.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/TextEntry.h>
-#include "panellistpanel.h"
+#include "PanelListPanel.h"
 #include <vgui/IInput.h>
 
-#include "filesystem.h"
+#include "FileSystem.h"
 
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -161,17 +161,17 @@ void CMultiplayerAdvancedDialog::GatherCurrentValues()
 		{
 		case O_BOOL:
 			pBox = (CheckButton *)pList->pControl;
-			Q_snprintf( szValue, 256, "%s", pBox->IsSelected() ? "1" : "0" );
+			sprintf( szValue, "%s", pBox->IsSelected() ? "1" : "0" );
 			break;
 		case O_NUMBER:
 			pEdit = ( TextEntry * )pList->pControl;
 			pEdit->GetText( strValue, sizeof( strValue ) );
-			Q_snprintf( szValue, 256, "%s", strValue );
+			sprintf( szValue, "%s", strValue );
 			break;
 		case O_STRING:
 			pEdit = ( TextEntry * )pList->pControl;
 			pEdit->GetText( strValue, sizeof( strValue ) );
-			Q_snprintf( szValue, 256, "%s", strValue );
+			sprintf( szValue, "%s", strValue );
 			break;
 		case O_LIST:
 			pCombo = (ComboBox *)pList->pControl;
@@ -191,12 +191,12 @@ void CMultiplayerAdvancedDialog::GatherCurrentValues()
 
 			if ( pItem )
 			{
-				Q_snprintf( szValue, 256, "%s", pItem->szValue );
+				sprintf( szValue, "%s", pItem->szValue );
 			}
 			else  // Couln't find index
 			{
 				//assert(!("Couldn't find string in list, using default value"));
-				Q_snprintf( szValue, 256, "%s", pObj->defValue );
+				sprintf( szValue, "%s", pObj->defValue );
 			}
 			break;
 		}
@@ -412,7 +412,7 @@ void CInfoDescription::WriteScriptHeader( FileHandle_t fp )
 	tm newtime;
 	Plat_GetLocalTime( &newtime );
 
-	g_pFullFileSystem->FPrintf( fp, "%s", (char *)getHint() );
+	g_pFullFileSystem->FPrintf( fp, (char *)getHint() );
 
 	char timeString[64];
 	Plat_GetTimeString( &newtime, timeString, sizeof( timeString ) );

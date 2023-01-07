@@ -5,10 +5,10 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "optionssubdifficulty.h"
+#include "OptionsSubDifficulty.h"
 #include "tier1/convar.h"
-#include "engineinterface.h"
-#include "tier1/keyvalues.h"
+#include "EngineInterface.h"
+#include "tier1/KeyValues.h"
 
 #include "vgui_controls/RadioButton.h"
 

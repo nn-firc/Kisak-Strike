@@ -12,8 +12,8 @@
 
 #include "vgui_controls/Frame.h"
 #include "vgui/MouseCode.h"
-#include "keyvalues.h"
-#include "utlvector.h"
+#include "KeyValues.h"
+#include "UtlVector.h"
 
 
 #define SAVEGAME_MAPNAME_LEN 32

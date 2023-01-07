@@ -61,7 +61,7 @@ class COptionsSubMultiplayer : public vgui::PropertyPage
 	DECLARE_CLASS_SIMPLE( COptionsSubMultiplayer, vgui::PropertyPage );
 
 public:
-	explicit COptionsSubMultiplayer(vgui::Panel *parent);
+	COptionsSubMultiplayer(vgui::Panel *parent);
 	~COptionsSubMultiplayer();
 
 	virtual vgui::Panel *CreateControlByName(const char *controlName);
@@ -155,8 +155,9 @@ private:
 	int	m_nLogoG;
 	int	m_nLogoB;
 
+#ifndef _XBOX
 	vgui::DHANDLE<CMultiplayerAdvancedDialog> m_hMultiplayerAdvancedDialog;
-
+#endif
 	vgui::FileOpenDialog *m_hImportSprayDialog;
 };
 

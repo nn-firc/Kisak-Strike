@@ -5,10 +5,10 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "cvartogglecheckbutton.h"
-#include "engineinterface.h"
+#include "CvarToggleCheckButton.h"
+#include "EngineInterface.h"
 #include <vgui/IVGui.h>
-#include "tier1/keyvalues.h"
+#include "tier1/KeyValues.h"
 #include "tier1/convar.h"
 #include "IGameUIFuncs.h"
 

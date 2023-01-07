@@ -7,9 +7,9 @@
 
 
 #include "IRunGameEngine.h"
-#include "engineinterface.h"
+#include "EngineInterface.h"
 #include "tier1/strtools.h"
-#include "IGameUIFuncs.h"
+#include "igameuifuncs.h"
 #include "tier1/convar.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -32,13 +32,6 @@ public:
 	// returns true on success, false on failure
 	virtual bool AddTextCommand(const char *text)
 	{
-		// SERVERBROWSER HACK: -- it just stuffs commands into command buffer
-		// which is pretty horrible because it doesn't let game code to react
-		if ( text && StringHasPrefix( text, "connect " ) && g_pMatchFramework )
-		{
-			g_pMatchFramework->CloseSession();
-		}
-
 		engine->ClientCmd_Unrestricted((char *)text);
 		return true;
 	}
@@ -108,8 +101,6 @@ public:
 	// gets the in-game name of another user, returns NULL if that user doesn't exists
 	virtual const char *GetPlayerName(int trackerID)
 	{
-#if 0// DDK: this code could very likely cause a crash
-		Assert(false); 
 		// find the player by their friendsID
 		player_info_t pi;
 		for (int i = 0; i < engine->GetMaxClients(); i++)
@@ -123,15 +114,11 @@ public:
 			}
 		}
 
-#endif
 		return NULL;
 	}
 
 	virtual const char *GetPlayerFriendsName(int trackerID)
 	{
-#if 0// DDK: this code could very likely cause a crash
-
-		Assert(false); 
 		// find the player by their friendsID
 		player_info_t pi;
 		for (int i = 0; i < engine->GetMaxClients(); i++)
@@ -145,7 +132,6 @@ public:
 			}
 		}
 
-#endif
 		return NULL;
 	}
 

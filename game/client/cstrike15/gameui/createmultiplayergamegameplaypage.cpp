@@ -9,20 +9,20 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "createmultiplayergamegameplaypage.h"
+#include "CreateMultiplayerGameGameplayPage.h"
 
 using namespace vgui;
 
-#include <keyvalues.h>
+#include <KeyValues.h>
 #include <vgui/ILocalize.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/CheckButton.h>
 #include <vgui_controls/Label.h>
 #include <vgui_controls/TextEntry.h>
 
-#include "filesystem.h"
-#include "panellistpanel.h"
-#include "scriptobject.h"
+#include "FileSystem.h"
+#include "PanelListPanel.h"
+#include "ScriptObject.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
@@ -37,7 +37,7 @@ using namespace vgui;
 class CServerDescription : public CDescription
 {
 public:
-	explicit CServerDescription( CPanelListPanel *panel );
+	CServerDescription( CPanelListPanel *panel );
 
 	void WriteScriptHeader( FileHandle_t fp );
 	void WriteFileHeader( FileHandle_t fp ); 
@@ -342,7 +342,7 @@ void CCreateMultiplayerGameGameplayPage::GatherCurrentValues()
 				if ( wLocalizedString )
 				{
 					// Copy the string we found into our temp array
-					V_wcscpy_safe( w_szStrTemp, wLocalizedString );
+					wcsncpy( w_szStrTemp, wLocalizedString, sizeof( w_szStrTemp ) / sizeof( wchar_t ) );
 				}
 				else
 				{
@@ -438,7 +438,7 @@ void CServerDescription::WriteScriptHeader( FileHandle_t fp )
 	if( newtime.tm_hour == 0 )        /*Set hour to 12 if midnight. */
 		newtime.tm_hour = 12;
 
-	g_pFullFileSystem->FPrintf( fp, "%s", (char *)getHint() );
+	g_pFullFileSystem->FPrintf( fp, (char *)getHint() );
 
 	char timeString[64];
 	Plat_GetTimeString( &newtime, timeString, sizeof( timeString ) );

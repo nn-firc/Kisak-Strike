@@ -6,22 +6,21 @@
 
 #include <stdio.h>
 
-#include "ienginevgui.h"
-#include "vguisystemmoduleloader.h"
-#include "sys_utils.h"
-#include "IVguiModule.h"
+#include "VGuiSystemModuleLoader.h"
+#include "Sys_Utils.h"
+#include "IVGuiModule.h"
 #include "ServerBrowser/IServerBrowser.h"
 
 #include <vgui/IPanel.h>
 #include <vgui/ISystem.h>
 #include <vgui/IVGui.h>
 #include <vgui/ILocalize.h>
-#include <keyvalues.h>
+#include <KeyValues.h>
 
 #include <vgui_controls/Controls.h>
 #include <vgui_controls/Panel.h>
 
-#include "filesystem.h"
+#include "FileSystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -75,7 +74,7 @@ bool CVGuiSystemModuleLoader::IsPlatformReady()
 //-----------------------------------------------------------------------------
 bool CVGuiSystemModuleLoader::InitializeAllModules(CreateInterfaceFn *factorylist, int factorycount)
 {
-	if ( IsGameConsole() )
+	if ( IsX360() )
 	{
 		// not valid for 360
 		return false;
@@ -111,9 +110,7 @@ bool CVGuiSystemModuleLoader::InitializeAllModules(CreateInterfaceFn *factorylis
 		}
 		
 #ifdef GAMEUI_EXPORTS
-		vgui::VPANEL rootpanel = enginevgui->GetPanel( PANEL_GAMEUIDLL );
-	
-		m_Modules[i].moduleInterface->SetParent( rootpanel );
+		m_Modules[i].moduleInterface->SetParent(GetGameUIBasePanel());
 #else
 		m_Modules[i].moduleInterface->SetParent(g_pMainPanel->GetVPanel());		
 #endif
@@ -128,11 +125,7 @@ bool CVGuiSystemModuleLoader::InitializeAllModules(CreateInterfaceFn *factorylis
 //-----------------------------------------------------------------------------
 bool CVGuiSystemModuleLoader::LoadPlatformModules(CreateInterfaceFn *factorylist, int factorycount, bool useSteamModules)
 {
-#ifdef DEDICATED
-	return false;
-#endif
-
-	if ( IsGameConsole() )
+	if ( IsX360() )
 	{
 		// not valid for 360
 		return false;
@@ -163,22 +156,9 @@ bool CVGuiSystemModuleLoader::LoadPlatformModules(CreateInterfaceFn *factorylist
 			continue;
 
 		// get copy out of steam cache
-		const char *dllPath = NULL;
-		if ( IsOSX() )
-		{
-			dllPath = it->GetString("dll_osx");
-		}
-		else if ( IsLinux() )
-		{
-			dllPath = it->GetString("dll_linux");
-		}
-		else
-		{
-			dllPath = it->GetString("dll");
-		}
+		const char *dllPath = it->GetString("dll");
 
 		// load the module (LoadModule calls GetLocalCopy() under steam)
-		printf("****loading %s\n", dllPath);
 		CSysModule *mod = g_pFullFileSystem->LoadModule(dllPath, "EXECUTABLE_PATH");
 		if (!mod)
 		{
@@ -212,7 +192,7 @@ bool CVGuiSystemModuleLoader::LoadPlatformModules(CreateInterfaceFn *factorylist
 //-----------------------------------------------------------------------------
 void CVGuiSystemModuleLoader::ShutdownPlatformModules()
 {
-	if ( IsGameConsole() )
+	if ( IsX360() )
 	{
 		// not valid for 360
 		return;
@@ -337,35 +317,20 @@ bool CVGuiSystemModuleLoader::ActivateModule(int moduleIndex)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: look up a module by name
+// Purpose: activates a module by name
 //-----------------------------------------------------------------------------
-
-int CVGuiSystemModuleLoader::GetModuleIndexFromName( const char* moduleName )
+bool CVGuiSystemModuleLoader::ActivateModule(const char *moduleName)
 {
-	int result = -1;
-
-	for ( int i = 0; i < GetModuleCount(); i++ )
+	for (int i = 0; i < GetModuleCount(); i++)
 	{
-		if ( !stricmp( GetModuleLabel( i ), moduleName ) || !stricmp( m_Modules[i].data->GetName(), moduleName ) )
+		if (!stricmp(GetModuleLabel(i), moduleName) || !stricmp(m_Modules[i].data->GetName(), moduleName))
 		{
-			result = i;
-			break;
+			ActivateModule(i);
+			return true;
 		}
 	}
 
-	return result;
-
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: activates a module by name
-//-----------------------------------------------------------------------------
-bool CVGuiSystemModuleLoader::ActivateModule( const char *moduleName )
-{
-	// ActivateModule checks the validity of the index, so it will
-	// work correctly even if moduleName is not a valid module
-	return ActivateModule( GetModuleIndexFromName( moduleName ) );
+	return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -388,30 +353,6 @@ void CVGuiSystemModuleLoader::PostMessageToAllModules(KeyValues *message)
 	}
 	message->deleteThis();
 }
-
-
-//-----------------------------------------------------------------------------
-// Purpose: Post a message to a particular module
-//-----------------------------------------------------------------------------
-
-// posts a message to a single module
-bool CVGuiSystemModuleLoader::PostMessageToModule( int moduleIndex, KeyValues *message )
-{
-	if ( !m_Modules.IsValidIndex( moduleIndex ) )
-		return false;
-
-	vgui::ivgui()->PostMessage( m_Modules[moduleIndex].moduleInterface->GetPanel(), message->MakeCopy(), NULL );
-
-	return true;
-}
-
-bool CVGuiSystemModuleLoader::PostMessageToModule( const char *moduleName, KeyValues *message )
-{
-	// ActivateModule checks the validity of the index, so it will
-	// work correctly even if moduleName is not a valid module
-	return PostMessageToModule( GetModuleIndexFromName( moduleName ), message );
-}
-
 
 //-----------------------------------------------------------------------------
 // Purpose: sets the the platform should update and restart when it quits

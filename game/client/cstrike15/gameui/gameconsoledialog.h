@@ -12,9 +12,9 @@
 #endif
 
 #include "vgui_controls/consoledialog.h"
-#include <color.h>
-#include "utlvector.h"
-#include "engineinterface.h"
+#include <Color.h>
+#include "UtlVector.h"
+#include "EngineInterface.h"
 #include "vgui_controls/Frame.h"
 
 

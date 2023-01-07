@@ -4,16 +4,16 @@
 //
 //==========================================================================//
 
-#include "optionssubvoice.h"
-#include "cvarslider.h"
+#include "OptionsSubVoice.h"
+#include "CvarSlider.h"
 #include <vgui/IVGui.h>
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/CheckButton.h>
 #include <vgui_controls/Slider.h>
-#include "engineinterface.h"
+#include "EngineInterface.h"
 #include "ivoicetweak.h"
-#include "cvartogglecheckbutton.h"
-#include "tier1/keyvalues.h"
+#include "CvarToggleCheckButton.h"
+#include "tier1/KeyValues.h"
 #include "tier1/convar.h"
 
 // memdbgon must be the last include file in a .cpp file!!!

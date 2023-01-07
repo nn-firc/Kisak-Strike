@@ -10,9 +10,9 @@
 #pragma once
 #endif
 
-#include "vgui_controls/ImagePanel.h"
-#include "vgui_controls/EditablePanel.h"
-#include "vgui_controls/Label.h"
+#include "vgui_controls/imagepanel.h"
+#include "vgui_controls/editablepanel.h"
+#include "vgui_controls/label.h"
 
 #define MAX_TIP_LENGTH 64
 
@@ -37,7 +37,7 @@ class CLoadingTipPanel : public vgui::EditablePanel
 	DECLARE_CLASS_SIMPLE( CLoadingTipPanel, vgui::EditablePanel )
 
 public:
-	explicit CLoadingTipPanel( Panel *pParent );
+	CLoadingTipPanel( Panel *pParent );
 	~CLoadingTipPanel();
 
 	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );

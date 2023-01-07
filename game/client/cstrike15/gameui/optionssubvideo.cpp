@@ -5,27 +5,27 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "optionssubvideo.h"
-#include "cvarslider.h"
-#include "engineinterface.h"
-#include "basepanel.h"
-#include "IGameUIFuncs.h"
+#include "OptionsSubVideo.h"
+#include "CvarSlider.h"
+#include "EngineInterface.h"
+#include "BasePanel.h"
+#include "igameuifuncs.h"
 #include "modes.h"
 #include "materialsystem/materialsystem_config.h"
 #include "filesystem.h"
-#include "gameui_interface.h"
+#include "GameUI_Interface.h"
 #include "vgui_controls/CheckButton.h"
 #include "vgui_controls/ComboBox.h"
 #include "vgui_controls/Frame.h"
 #include "vgui_controls/QueryBox.h"
-#include "cvartogglecheckbutton.h"
-#include "tier1/keyvalues.h"
+#include "CvarToggleCheckButton.h"
+#include "tier1/KeyValues.h"
 #include "vgui/IInput.h"
 #include "vgui/ILocalize.h"
 #include "vgui/ISystem.h"
-#include "tier0/icommandline.h"
+#include "tier0/ICommandLine.h"
 #include "tier1/convar.h"
-#include "modinfo.h"
+#include "ModInfo.h"
 
 #include "inetchannelinfo.h"
 
@@ -129,7 +129,7 @@ class CGammaDialog : public vgui::Frame
 {
 	DECLARE_CLASS_SIMPLE( CGammaDialog, vgui::Frame );
 public:
-	explicit CGammaDialog( vgui::VPANEL hParent ) : BaseClass( NULL, "OptionsSubVideoGammaDlg" )
+	CGammaDialog( vgui::VPANEL hParent ) : BaseClass( NULL, "OptionsSubVideoGammaDlg" )
 	{
 		// parent is ignored, since we want look like we're steal focus from the parent (we'll become modal below)
 		SetTitle("#GameUI_AdjustGamma_Title", true);
@@ -243,7 +243,7 @@ class COptionsSubVideoAdvancedDlg : public vgui::Frame
 {
 	DECLARE_CLASS_SIMPLE( COptionsSubVideoAdvancedDlg, vgui::Frame );
 public:
-	explicit COptionsSubVideoAdvancedDlg( vgui::Panel *parent ) : BaseClass( parent , "OptionsSubVideoAdvancedDlg" )
+	COptionsSubVideoAdvancedDlg( vgui::Panel *parent ) : BaseClass( parent , "OptionsSubVideoAdvancedDlg" )
 	{
 		SetTitle("#GameUI_VideoAdvanced_Title", true);
 		SetSize( 260, 400 );
@@ -548,7 +548,7 @@ public:
 		int nAAQuality = pKeyValues->GetInt( "ConVar.mat_aaquality", 0 );
 		int nRenderToTextureShadows = pKeyValues->GetInt( "ConVar.r_shadowrendertotexture", 0 );
 		int nShadowDepthTextureShadows = pKeyValues->GetInt( "ConVar.r_flashlightdepthtexture", 0 );
-#ifndef _GAMECONSOLE
+#ifndef _X360
 		int nWaterUseRealtimeReflection = pKeyValues->GetInt( "ConVar.r_waterforceexpensive", 0 );
 #endif
 		int nWaterUseEntityReflection = pKeyValues->GetInt( "ConVar.r_waterforcereflectentities", 0 );
@@ -616,7 +616,7 @@ public:
 
 		SetComboItemAsRecommended( m_pShaderDetail, nReduceFillRate ? 0 : 1 );
 		
-#ifndef _GAMECONSOLE
+#ifndef _X360
 		if ( nWaterUseRealtimeReflection )
 #endif
 		{
@@ -629,7 +629,7 @@ public:
 				SetComboItemAsRecommended( m_pWaterDetail, 1 );
 			}
 		}
-#ifndef _GAMECONSOLE
+#ifndef _X360
 		else
 		{
 			SetComboItemAsRecommended( m_pWaterDetail, 0 );
@@ -722,19 +722,19 @@ public:
 		{
 		default:
 		case 0:
-#ifndef _GAMECONSOLE
+#ifndef _X360
 			ApplyChangesToConVar( "r_waterforceexpensive", false );
 #endif
 			ApplyChangesToConVar( "r_waterforcereflectentities", false );
 			break;
 		case 1:
-#ifndef _GAMECONSOLE
+#ifndef _X360
 			ApplyChangesToConVar( "r_waterforceexpensive", true );
 #endif
 			ApplyChangesToConVar( "r_waterforcereflectentities", false );
 			break;
 		case 2:
-#ifndef _GAMECONSOLE
+#ifndef _X360
 			ApplyChangesToConVar( "r_waterforceexpensive", true );
 #endif
 			ApplyChangesToConVar( "r_waterforcereflectentities", true );
@@ -765,7 +765,7 @@ public:
 		ConVarRef mat_aaquality( "mat_aaquality" );
 		ConVarRef mat_vsync( "mat_vsync" );
 		ConVarRef r_flashlightdepthtexture( "r_flashlightdepthtexture" );
-#ifndef _GAMECONSOLE
+#ifndef _X360
 		ConVarRef r_waterforceexpensive( "r_waterforceexpensive" );
 #endif
 		ConVarRef r_waterforcereflectentities( "r_waterforcereflectentities" );
@@ -830,7 +830,7 @@ public:
 		int nMSAAMode = FindMSAAMode( nAASamples, nAAQuality );
 		m_pAntialiasingMode->ActivateItem( nMSAAMode );
 		
-#ifndef _GAMECONSOLE
+#ifndef _X360
 		if ( r_waterforceexpensive.GetBool() )
 #endif
 		{
@@ -843,7 +843,7 @@ public:
 				m_pWaterDetail->ActivateItem( 1 );
 			}
 		}
-#ifndef _GAMECONSOLE
+#ifndef _X360
 		else
 		{
 			m_pWaterDetail->ActivateItem( 0 );
@@ -1090,7 +1090,7 @@ void COptionsSubVideo::PrepareResolutionList()
 	else
 	{
 		char sz[256];
-		Q_snprintf( sz, 256, "%d x %d", config.m_VideoMode.m_Width, config.m_VideoMode.m_Height );
+		sprintf( sz, "%d x %d", config.m_VideoMode.m_Width, config.m_VideoMode.m_Height );
 		m_pMode->SetText( sz );
 	}
 }
@@ -1169,7 +1169,7 @@ void COptionsSubVideo::OnApplyChanges()
 			const char *pAddr = nci->GetAddress();
 			if ( pAddr )
 			{
-				if ( !StringHasPrefixCaseSensitive( pAddr, "127.0.0.1" ) && !StringHasPrefixCaseSensitive( pAddr,"localhost" ) )
+				if ( Q_strncmp(pAddr,"127.0.0.1",9) && Q_strncmp(pAddr,"localhost",9) )
 				{
 					engine->ClientCmd_Unrestricted( "retry\n" );
 				}
@@ -1351,7 +1351,7 @@ COptionsSubVideoThirdPartyCreditsDlg::COptionsSubVideoThirdPartyCreditsDlg( vgui
 
 	// parent is ignored, since we want look like we're steal focus from the parent (we'll become modal below)
 #ifdef SWARM_DLL
-	SetScheme( "SwarmScheme" );
+	SetScheme( "SwarmFrameScheme" );
 #endif
 
 	SetTitle("#GameUI_ThirdPartyVideo_Title", true);

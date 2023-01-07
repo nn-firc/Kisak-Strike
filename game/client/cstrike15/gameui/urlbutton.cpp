@@ -1,4 +1,4 @@
-//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Basic button control
 //
@@ -6,7 +6,7 @@
 //=============================================================================//
 
 #include <stdio.h>
-#include <utlsymbol.h>
+#include <UtlSymbol.h>
 
 #include <vgui/IBorder.h>
 #include <vgui/IInput.h>
@@ -16,9 +16,9 @@
 #include <vgui/IVGui.h>
 #include <vgui/MouseCode.h>
 #include <vgui/KeyCode.h>
-#include <keyvalues.h>
+#include <KeyValues.h>
 
-#include "urlbutton.h"
+#include "URLButton.h"
 #include <vgui_controls/FocusNavGroup.h>
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -375,11 +375,11 @@ void URLButton::FireActionSignal()
 	{
 		// see if it's a url
 		if (!stricmp(_actionMessage->GetName(), "command")
-			&& StringHasPrefix(_actionMessage->GetString("command", ""), "url " )
+			&& !strnicmp(_actionMessage->GetString("command", ""), "url ", strlen("url "))
 			&& strstr(_actionMessage->GetString("command", ""), "://"))
 		{
 			// it's a command to launch a url, run it
-			system()->OpenURL(_actionMessage->GetString("command", "      ") + 4);
+			system()->ShellExecute("open", _actionMessage->GetString("command", "      ") + 4);
 		}
 		PostActionSignal(_actionMessage->MakeCopy());
 	}

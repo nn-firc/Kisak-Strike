@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include <vgui/vgui.h>
+#include <vgui/VGUI.h>
 
 class KeyValues;
 
@@ -55,10 +55,6 @@ private:
 	wchar_t m_wcsGameTitle[128];
 	wchar_t m_wcsGameTitle2[128];
 	KeyValues *m_pModData;
-
-	// Deleted copy operations (rule of 3!)
-	CModInfo( const CModInfo& ); // = delete
-	CModInfo& operator= ( const CModInfo& ); // = delete
 };
 
 

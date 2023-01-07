@@ -13,8 +13,8 @@
 
 #include "vgui_controls/PropertyPage.h"
 #include <language.h>
-#include "vgui_controls/Frame.h"
-#include "vgui/KeyCode.h"
+#include "vgui_controls/frame.h"
+#include "vgui/keycode.h"
 
 class CLabeledCommandComboBox;
 class CCvarSlider;
@@ -27,7 +27,7 @@ class COptionsSubAudio : public vgui::PropertyPage
 	DECLARE_CLASS_SIMPLE( COptionsSubAudio, vgui::PropertyPage );
 
 public:
-	explicit COptionsSubAudio(vgui::Panel *parent);
+	COptionsSubAudio(vgui::Panel *parent);
 	~COptionsSubAudio();
 
 	virtual void OnResetData();
@@ -67,7 +67,7 @@ class COptionsSubAudioThirdPartyCreditsDlg : public vgui::Frame
 {
 	DECLARE_CLASS_SIMPLE( COptionsSubAudioThirdPartyCreditsDlg, vgui::Frame );
 public:
-	explicit COptionsSubAudioThirdPartyCreditsDlg( vgui::VPANEL hParent );
+	COptionsSubAudioThirdPartyCreditsDlg( vgui::VPANEL hParent );
 
 	virtual void Activate();
 	void OnKeyCodeTyped(vgui::KeyCode code);

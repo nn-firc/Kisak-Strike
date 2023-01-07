@@ -24,7 +24,7 @@ class COptionsSubVoice : public vgui::PropertyPage
 	DECLARE_CLASS_SIMPLE( COptionsSubVoice, vgui::PropertyPage );
 
 public:
-	explicit COptionsSubVoice(vgui::Panel *parent);
+	COptionsSubVoice(vgui::Panel *parent);
 	~COptionsSubVoice();
 
 	virtual void OnResetData();

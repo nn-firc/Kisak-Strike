@@ -5,8 +5,8 @@
 //=============================================================================//
 
 
-#include "basesavegamedialog.h"
-#include "filesystem.h"
+#include "BaseSaveGameDialog.h"
+#include "FileSystem.h"
 #include "savegame_version.h"
 #include "vgui_controls/PanelListPanel.h"
 #include "vgui_controls/Label.h"
@@ -17,9 +17,9 @@
 #include "tier2/resourceprecacher.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "filesystem.h"
+#include "FileSystem.h"
 
-#include "mousemessageforwardingpanel.h"
+#include "MouseMessageForwardingPanel.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -221,7 +221,7 @@ void CBaseSaveGameDialog::ScanSavedGames()
 	const char *pFileName = g_pFullFileSystem->FindFirst( szDirectory, &handle );
 	while (pFileName)
 	{
-		if ( StringHasPrefix( pFileName, "HLSave" ) )
+		if ( !Q_strnicmp(pFileName, "HLSave", strlen( "HLSave" ) ) )
 		{
 			pFileName = g_pFullFileSystem->FindNext( handle );
 			continue;

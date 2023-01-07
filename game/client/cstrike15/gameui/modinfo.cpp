@@ -6,11 +6,11 @@
 //=============================================================================//
 
 
-#include "modinfo.h"
-#include "keyvalues.h"
+#include "ModInfo.h"
+#include "KeyValues.h"
 #include "vgui_controls/Controls.h"
-#include "filesystem.h"
-#include "engineinterface.h"
+#include "FileSystem.h"
+#include "EngineInterface.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>
@@ -66,7 +66,12 @@ bool CModInfo::IsMultiplayerOnly()
 //-----------------------------------------------------------------------------
 bool CModInfo::IsSinglePlayerOnly()
 {
+#ifndef _XBOX
 	return (stricmp(m_pModData->GetString("type", ""), "singleplayer_only") == 0);
+#else
+	// xboxissue - no support for disparate mounted content
+	return true;
+#endif
 }
 
 //-----------------------------------------------------------------------------

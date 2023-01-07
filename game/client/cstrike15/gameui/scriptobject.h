@@ -142,7 +142,7 @@ public:
 class CInfoDescription : public CDescription
 {
 public:
-	explicit CInfoDescription( CPanelListPanel *panel );
+	CInfoDescription( CPanelListPanel *panel );
 
 	void WriteScriptHeader( FileHandle_t fp );
 	void WriteFileHeader( FileHandle_t fp ); 

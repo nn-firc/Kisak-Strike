@@ -4,14 +4,14 @@
 //
 //=============================================================================
 
-#include "customtabexplanationdialog.h"
-#include "basepanel.h"
+#include "CustomTabExplanationDialog.h"
+#include "BasePanel.h"
 #include "convar.h"
-#include "engineinterface.h"
-#include "gameui_interface.h"
+#include "EngineInterface.h"
+#include "GameUI_Interface.h"
 #include "vgui/ISurface.h"
 #include "vgui/IInput.h"
-#include "modinfo.h"
+#include "ModInfo.h"
 #include <stdio.h>
 
 using namespace vgui;

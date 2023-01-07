@@ -32,7 +32,7 @@ class COptionsSubMouse : public vgui::PropertyPage
 	DECLARE_CLASS_SIMPLE( COptionsSubMouse, vgui::PropertyPage );
 
 public:
-	explicit COptionsSubMouse(vgui::Panel *parent);
+	COptionsSubMouse(vgui::Panel *parent);
 	~COptionsSubMouse();
 
 	virtual void OnResetData();
@@ -41,23 +41,19 @@ public:
 protected:
     virtual void ApplySchemeSettings(vgui::IScheme *pScheme);
 
+private:
 	MESSAGE_FUNC_PTR( OnControlModified, "ControlModified", panel );
-	MESSAGE_FUNC_PTR( OnTextChanged, "TextChanged", panel );
+    MESSAGE_FUNC_PTR( OnTextChanged, "TextChanged", panel );
 	MESSAGE_FUNC_PTR( OnCheckButtonChecked, "CheckButtonChecked", panel )
 	{
 		OnControlModified( panel );
 	}
 
-	void UpdateSensitivityLabel();
-	void UpdateAccelerationLabel();
+    void UpdateSensitivityLabel();
 	void UpdateJoystickPanels();
 
-private:
 	CCvarNegateCheckButton		*m_pReverseMouseCheckBox;
 	CCvarToggleCheckButton		*m_pMouseFilterCheckBox;
-	CCvarToggleCheckButton		*m_pMouseRawCheckBox;
-	vgui::CheckButton			*m_pMouseAccelerationCheckBox;
-
 	CCvarToggleCheckButton		*m_pJoystickCheckBox;
 	CCvarToggleCheckButton		*m_pJoystickSouthpawCheckBox;
 	CCvarToggleCheckButton		*m_pQuickInfoCheckBox;
@@ -65,9 +61,6 @@ private:
 
 	CCvarSlider					*m_pMouseSensitivitySlider;
     vgui::TextEntry             *m_pMouseSensitivityLabel;
-
-	CCvarSlider					*m_pMouseAccelExponentSlider;
-	vgui::TextEntry             *m_pMouseAccelExponentLabel;
 
 	CCvarSlider					*m_pJoyYawSensitivitySlider;
 	vgui::Label					*m_pJoyYawSensitivityPreLabel;

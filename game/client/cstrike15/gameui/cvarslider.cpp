@@ -5,13 +5,13 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-#include "cvarslider.h"
+#include "CvarSlider.h"
 #include <stdio.h>
-#include "engineinterface.h"
-#include "tier1/keyvalues.h"
+#include "EngineInterface.h"
+#include "tier1/KeyValues.h"
 #include "tier1/convar.h"
 #include <vgui/IVGui.h>
-#include <vgui_controls/PropertyPage.h>
+#include <vgui_controls/propertypage.h>
 
 #define CVARSLIDER_SCALE_FACTOR 100.0f
 

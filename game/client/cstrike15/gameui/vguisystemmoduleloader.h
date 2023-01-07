@@ -11,7 +11,7 @@
 #endif
 
 #include "vgui_controls/PHandle.h"
-#include "utlvector.h"
+#include "UtlVector.h"
 #include "IVGuiModuleLoader.h"
 
 class IVGuiModule;
@@ -68,10 +68,6 @@ public:
 	// posts a message to all active modules
 	void PostMessageToAllModules(KeyValues *message);
 
-	// posts a message to a single module
-	bool PostMessageToModule( int moduleIndex, KeyValues *message );
-	bool PostMessageToModule( const char *moduleName, KeyValues *message );
-
 	// sets the the platform should update and restart when it quits
 	void SetPlatformToRestart();
 
@@ -81,8 +77,6 @@ public:
 private:
 	// sets up all the modules for use
 	bool InitializeAllModules(CreateInterfaceFn *factorylist, int factorycount);
-
-	int GetModuleIndexFromName( const char* name );
 
 	bool m_bModulesInitialized;
 	bool m_bPlatformShouldRestartAfterExit;

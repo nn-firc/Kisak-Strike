@@ -5,16 +5,16 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-#include "optionssubmouse.h"
+#include "OptionsSubMouse.h"
 //#include "CommandCheckButton.h"
-#include "keytogglecheckbutton.h"
-#include "cvarnegatecheckbutton.h"
-#include "cvartogglecheckbutton.h"
-#include "cvarslider.h"
+#include "KeyToggleCheckButton.h"
+#include "CvarNegateCheckButton.h"
+#include "CvarToggleCheckButton.h"
+#include "CvarSlider.h"
 
-#include "engineinterface.h"
+#include "EngineInterface.h"
 
-#include <keyvalues.h>
+#include <KeyValues.h>
 #include <vgui/IScheme.h>
 #include "tier1/convar.h"
 #include <stdio.h>
@@ -37,18 +37,6 @@ COptionsSubMouse::COptionsSubMouse(vgui::Panel *parent) : PropertyPage(parent, N
 		"MouseFilter", 
 		"#GameUI_MouseFilter", 
 		"m_filter" );
-
-	m_pMouseRawCheckBox = new CCvarToggleCheckButton( 
-		this, 
-		"MouseRaw", 
-		"#GameUI_MouseRaw", 
-		"m_rawinput" );
-
-	m_pMouseAccelerationCheckBox = new CheckButton( 
-		this, 
-		"MouseAccelerationCheckbox", 
-		"#GameUI_MouseCustomAccel" );
-
 
 	m_pJoystickCheckBox = new CCvarToggleCheckButton( 
 		this, 
@@ -75,16 +63,10 @@ COptionsSubMouse::COptionsSubMouse(vgui::Panel *parent) : PropertyPage(parent, N
 		"hud_quickinfo" );
 
 	m_pMouseSensitivitySlider = new CCvarSlider( this, "Slider", "#GameUI_MouseSensitivity",
-		0.1f, 6.0f, "sensitivity", true );
+		1.0f, 20.0f, "sensitivity", true );
 
     m_pMouseSensitivityLabel = new TextEntry(this, "SensitivityLabel");
     m_pMouseSensitivityLabel->AddActionSignalTarget(this);
-
-	m_pMouseAccelExponentSlider = new CCvarSlider( this, "MouseAccelerationSlider", "#GameUI_MouseAcceleration",
-		1.0f, 1.4f, "m_customaccel_exponent", true );
-
-	m_pMouseAccelExponentLabel = new TextEntry(this, "MouseAccelerationLabel");
-	m_pMouseAccelExponentLabel->AddActionSignalTarget(this);
 
 	m_pJoyYawSensitivitySlider = new CCvarSlider( this, "JoystickYawSlider", "#GameUI_JoystickYawSensitivity",
 		-0.5f, -7.0f, "joy_yawsensitivity", true );
@@ -96,8 +78,16 @@ COptionsSubMouse::COptionsSubMouse(vgui::Panel *parent) : PropertyPage(parent, N
 
 	LoadControlSettings("Resource\\OptionsSubMouse.res");
 
-	UpdateSensitivityLabel();
-	UpdateAccelerationLabel();
+    //float sensitivity = engine->pfnGetCvarFloat( "sensitivity" );
+	ConVarRef var( "sensitivity" );
+	if ( var.IsValid() )
+	{
+		float sensitivity = var.GetFloat();
+
+		char buf[64];
+		Q_snprintf(buf, sizeof(buf), " %.1f", sensitivity);
+		m_pMouseSensitivityLabel->SetText(buf);
+	}
 
 	UpdateJoystickPanels();
 }
@@ -116,19 +106,13 @@ void COptionsSubMouse::OnResetData()
 {
 	m_pReverseMouseCheckBox->Reset();
 	m_pMouseFilterCheckBox->Reset();
-	m_pMouseRawCheckBox->Reset();
 	m_pJoystickCheckBox->Reset();
 	m_pJoystickSouthpawCheckBox->Reset();
 	m_pMouseSensitivitySlider->Reset();
-	m_pMouseAccelExponentSlider->Reset();
 	m_pQuickInfoCheckBox->Reset();
 	m_pReverseJoystickCheckBox->Reset();
 	m_pJoyYawSensitivitySlider->Reset();
 	m_pJoyPitchSensitivitySlider->Reset();
-
-	ConVarRef m_customacel("m_customaccel");
-	if ( m_customacel.IsValid() )
-		m_pMouseAccelerationCheckBox->SetSelected( m_customacel.GetBool() );
 }
 
 //-----------------------------------------------------------------------------
@@ -138,22 +122,15 @@ void COptionsSubMouse::OnApplyChanges()
 {
 	m_pReverseMouseCheckBox->ApplyChanges();
 	m_pMouseFilterCheckBox->ApplyChanges();
-	m_pMouseRawCheckBox->ApplyChanges();
 	m_pJoystickCheckBox->ApplyChanges();
 	m_pJoystickSouthpawCheckBox->ApplyChanges();
 	m_pMouseSensitivitySlider->ApplyChanges();
-	m_pMouseAccelExponentSlider->ApplyChanges();
 	m_pQuickInfoCheckBox->ApplyChanges();
 	m_pReverseJoystickCheckBox->ApplyChanges();
 	m_pJoyYawSensitivitySlider->ApplyChanges();
 	m_pJoyPitchSensitivitySlider->ApplyChanges();
 
 	engine->ClientCmd_Unrestricted( "joyadvancedupdate" );
-	engine->ClientCmd_Unrestricted( "exec userconfig.cfg\nhost_writeconfig\n" );
-
-	ConVarRef m_customacel("m_customaccel");
-	if ( m_customacel.IsValid() )
-		m_customacel.SetValue(m_pMouseAccelerationCheckBox->IsSelected() ? 3 : 0);
 }
 
 //-----------------------------------------------------------------------------
@@ -178,18 +155,9 @@ void COptionsSubMouse::OnControlModified(Panel *panel)
     {
         UpdateSensitivityLabel();
     }
-	else if (panel == m_pMouseAccelExponentSlider && m_pMouseAccelExponentSlider->HasBeenModified())
-	{
-		UpdateAccelerationLabel();
-	}
 	else if (panel == m_pJoystickCheckBox)
 	{
 		UpdateJoystickPanels();
-	}
-	else if (panel == m_pMouseAccelerationCheckBox)
-	{
-		m_pMouseAccelExponentSlider->SetEnabled(m_pMouseAccelerationCheckBox->IsSelected());
-		m_pMouseAccelExponentLabel->SetEnabled(m_pMouseAccelerationCheckBox->IsSelected());
 	}
 }
 
@@ -198,7 +166,7 @@ void COptionsSubMouse::OnControlModified(Panel *panel)
 //-----------------------------------------------------------------------------
 void COptionsSubMouse::OnTextChanged(Panel *panel)
 {
-    if ( panel == m_pMouseSensitivityLabel )
+    if (panel == m_pMouseSensitivityLabel)
     {
         char buf[64];
         m_pMouseSensitivityLabel->GetText(buf, 64);
@@ -209,21 +177,7 @@ void COptionsSubMouse::OnTextChanged(Panel *panel)
             m_pMouseSensitivitySlider->SetSliderValue(fValue);
             PostActionSignal(new KeyValues("ApplyButtonEnable"));
         }
-		return;
     }
-
-	if ( panel == m_pMouseAccelExponentLabel )
-	{
-		char buf[64];
-		m_pMouseAccelExponentLabel->GetText(buf, 64);
-
-		float fValue = (float) atof(buf);
-		if (fValue >= 1.0)
-		{
-			m_pMouseAccelExponentSlider->SetSliderValue(fValue);
-			PostActionSignal(new KeyValues("ApplyButtonEnable"));
-		}
-	}
 }
 
 //-----------------------------------------------------------------------------
@@ -232,18 +186,9 @@ void COptionsSubMouse::OnTextChanged(Panel *panel)
 void COptionsSubMouse::UpdateSensitivityLabel()
 {
     char buf[64];
-    Q_snprintf(buf, sizeof( buf ), " %.2f", m_pMouseSensitivitySlider->GetSliderValue());
+    Q_snprintf(buf, sizeof( buf ), " %.1f", m_pMouseSensitivitySlider->GetSliderValue());
     m_pMouseSensitivityLabel->SetText(buf);
 }
-
-
-void COptionsSubMouse::UpdateAccelerationLabel()
-{
-	char buf[64];
-	Q_snprintf(buf, sizeof( buf ), " %.2f", m_pMouseAccelExponentSlider->GetSliderValue());
-	m_pMouseAccelExponentLabel->SetText(buf);
-}
-
 
 //-----------------------------------------------------------------------------
 // Purpose: 
